@@ -21,4 +21,16 @@ class JobUtils {
             .withIdentity("job_invoice_" + invoice.id)
             .usingJobData(Constants.INVOICE_ID, invoice.id)
             .build()
+
+
+    fun buildJobRetryTrigger(context: JobExecutionContext): SimpleTrigger = TriggerBuilder
+            .newTrigger()
+            .withDescription("Invoice Payment Retry Trigger")
+            .withIdentity(context.jobDetail.key.name, context.jobDetail.key.group)
+            .withSchedule(SimpleScheduleBuilder
+                    .simpleSchedule()
+                    .withRepeatCount(0)
+                    .withIntervalInMinutes(Constants.RETRY_DELAY))
+            .build()
+
 }
