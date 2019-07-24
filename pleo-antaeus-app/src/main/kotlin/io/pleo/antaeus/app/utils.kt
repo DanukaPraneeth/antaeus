@@ -1,6 +1,7 @@
 
 import io.pleo.antaeus.core.external.CurrencyConvertor
 import io.pleo.antaeus.core.external.PaymentProvider
+import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.models.Currency
 import io.pleo.antaeus.models.Invoice
@@ -10,7 +11,7 @@ import java.math.BigDecimal
 import kotlin.random.Random
 
 // This will create all schemas and setup initial data
-internal fun setupInitialData(dal: AntaeusDal) {
+internal fun setupInitialData(dal: AntaeusDal, billingService: BillingService) {
     val customers = (1..100).mapNotNull {
         dal.createCustomer(
             currency = Currency.values()[Random.nextInt(0, Currency.values().size)]
@@ -26,7 +27,7 @@ internal fun setupInitialData(dal: AntaeusDal) {
                 ),
                 customer = customer,
                 status = if (it == 1) InvoiceStatus.PENDING else InvoiceStatus.PAID
-            )
+            ).let { startSchedule -> billingService.startBillServiceExecutor(startSchedule!!)}
         }
     }
 }

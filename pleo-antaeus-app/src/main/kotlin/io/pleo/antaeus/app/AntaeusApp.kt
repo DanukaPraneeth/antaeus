@@ -46,9 +46,6 @@ fun main() {
     // Set up data access layer.
     val dal = AntaeusDal(db = db)
 
-    // Insert example data in the database.
-    setupInitialData(dal = dal)
-
     // Get third parties
     val paymentProvider = getPaymentProvider()
 
@@ -63,6 +60,9 @@ fun main() {
             invoiceService = invoiceService,
             customerService = customerService,
             currencyConvertor = currencyConvertor)
+
+    // Insert example data in the database.
+    setupInitialData(dal = dal, billingService = billingService)
 
     // Create REST web service
     AntaeusRest(
