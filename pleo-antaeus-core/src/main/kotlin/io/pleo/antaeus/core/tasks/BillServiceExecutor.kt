@@ -5,6 +5,7 @@ import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
 import io.pleo.antaeus.core.exceptions.NetworkException
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.utils.Constants
 import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
 import org.quartz.Job
@@ -23,11 +24,11 @@ class BillServiceExecutor : Job {
     override fun execute(context: JobExecutionContext) {
 
         val taskContext = context.scheduler.context
-        val paymentProvider = taskContext["PaymentProvider"] as PaymentProvider
-        val invoiceService = taskContext["InvoiceService"] as InvoiceService
+        val paymentProvider = taskContext[Constants.PAYMENT_PROVIDER] as PaymentProvider
+        val invoiceService = taskContext[Constants.INVOICE_SERVICE] as InvoiceService
 
+        val invoice = invoiceService.fetch(context.jobDetail.jobDataMap.getIntValue(Constants.INVOICE_ID))
 
-        val invoice = invoiceService.fetch(context.jobDetail.jobDataMap.getIntValue("invoiceId"))
         try {
             logger.debug("Executing the for ${invoice.id} and status ${invoice.status}")
             payCustomerInvoice(invoice, invoiceService, paymentProvider)

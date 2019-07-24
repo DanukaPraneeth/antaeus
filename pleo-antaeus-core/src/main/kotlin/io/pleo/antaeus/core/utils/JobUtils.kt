@@ -19,6 +19,6 @@ class JobUtils {
             .withDescription("Invoice Payment Job")
             .ofType(BillServiceExecutor::class.java)
             .withIdentity("job_invoice_" + invoice.id)
-            .usingJobData("invoiceId", invoice.id)
+            .usingJobData(Constants.INVOICE_ID, invoice.id)
             .build()
 }
