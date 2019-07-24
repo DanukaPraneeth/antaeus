@@ -7,6 +7,7 @@
 
 package io.pleo.antaeus.app
 
+import getCurrencyConvertor
 import getPaymentProvider
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
@@ -54,11 +55,14 @@ fun main() {
     // Create core services
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
+    val currencyConvertor = getCurrencyConvertor()
+
 
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(paymentProvider = paymentProvider,
             invoiceService = invoiceService,
-            customerService = customerService)
+            customerService = customerService,
+            currencyConvertor = currencyConvertor)
 
     // Create REST web service
     AntaeusRest(

@@ -1,5 +1,6 @@
 package io.pleo.antaeus.core.services
 
+import io.pleo.antaeus.core.external.CurrencyConvertor
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.core.utils.JobUtils
 import io.pleo.antaeus.models.Invoice
@@ -9,7 +10,8 @@ import org.quartz.impl.StdSchedulerFactory
 class BillingService(
         paymentProvider: PaymentProvider,
         invoiceService: InvoiceService,
-        customerService: CustomerService
+        customerService: CustomerService,
+        currencyConvertor: CurrencyConvertor
 ) {
 
     // TODO - Add code e.g. here
@@ -20,6 +22,8 @@ class BillingService(
         scheduler.context["paymentProvider"] = paymentProvider
         scheduler.context["invoiceService"] = invoiceService
         scheduler.context["customerService"] = customerService
+        scheduler.context["currencyConvertor"] = currencyConvertor
+
 
         if (!scheduler.isStarted) scheduler.start()
     }
