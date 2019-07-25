@@ -53,3 +53,51 @@ Happy hacking 😁!
 * [kotlin-logging](https://github.com/MicroUtils/kotlin-logging) - Simple logging framework for Kotlin
 * [JUnit 5](https://junit.org/junit5/) - Testing framework
 * [Mockk](https://mockk.io/) - Mocking library
+
+
+### Solution by [Danuka Praneeth](https://danukap.com) 
+
+
+### Development Approaches
+
+**Appraoch 1 :** This requirement can be achieved via a single long running batch process to select all the 'pending' invoices, make the payment and then to update the database. This approach is fairly straightforward and easy to implement. But I realised few limitations in this method. They are large processing time with the increase of batch size, overhead in the database (eg : db locks) in querying and updating a huge batch of data, possibility of rolling back the whole batch process with a single payment transaction failure, difficulties in scaling the batch process in distributed deployments etc.  
+
+
+**Appraoch 2 :** So to overcome those drawbacks, approach 2 was developed to initialise a scheduled task for each 'pending' invoice using the Quartz job scheduler. This gives us more control for the execution of the payment schedules, to more efficiently handle the resource utilization. So now we can scale the 'pending' invoice payments over different durations of the day and over different nodes in the cluster. This will minimise the overhead on database queries, any ongoing processes in the server and also the overhead on 3rd party payment provider.
+
+**Reasons to select Quartz**
+* open source job scheduling library
+* can be instantiated as a cluster of stand-alone programs with load-balance and fail-over capabilities
+* availability of many online resources 
+
+### Implementation
+
+**Special Note :** Non of the existing modules or models were changed during the development of this solution since the information on any external components dependant on existing mudules/models were not available.  
+
+#### Modifications to the Data Access Layer
+- New method was added to this layer to update the existing invoices
+
+#### Modifications to main application layer 
+- Updated the initialisation of the billing service
+- Since the data is inserted into the tables at the instantiation of the project, initialisation of the scheduled task for the billing service was done at this point. 
+- But in the actual scenario this scheduled task initialisation can be done at the point of creating a new invoice entry to the tables at the invoice service class.
+
+#### Modifications to Service layer
+- BillingService class was modified to implement the logic of creation of the quatz scheduled job
+- Here I have defined the cronschedule using a random variable to randomly distribute the scheduled task execution to different time periods of the day on 1st of every month. This will further to scale the batch process in a single server node
+- BillServiceExecutor class was created to implement the logic to perform the invoice payment and to handle different error scenarios.
+- Scheduled task will be destroyed if the invoice payment is successfully completed
+  
+### Further Improvements
+- Initialising new scheduled tasks for future new invoices created in the system
+- Test cases to cover full functionality of introduced new functions covering all possible error scenarios 
+
+
+### External libraries
+
+Latest stable version of Quartz job scheduling library
+
+
+It took me around 2.5 days to implement the logic and test cases. Additionally I spend around 2 days to learn the basics of Kotlin.
+
+I will be happy to discuss any further details on this.
