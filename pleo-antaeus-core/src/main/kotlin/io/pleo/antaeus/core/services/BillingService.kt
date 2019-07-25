@@ -17,12 +17,11 @@ class BillingService(
         paymentProvider: PaymentProvider,
         invoiceService: InvoiceService,
         customerService: CustomerService,
-        currencyConvertor: CurrencyConvertor
+        currencyConvertor: CurrencyConvertor,
+        private val scheduler: Scheduler = StdSchedulerFactory().scheduler
 ) {
 
     // TODO - Add code e.g. here
-
-    private val scheduler: Scheduler = StdSchedulerFactory().scheduler
 
     init {
         scheduler.context[PAYMENT_PROVIDER] = paymentProvider
