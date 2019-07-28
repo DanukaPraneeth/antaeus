@@ -90,14 +90,16 @@ Happy hacking 😁!
   
 ### Further Improvements
 - Initialising new scheduled tasks for future new invoices created in the system
-- Test cases to cover full functionality of introduced new functions covering all possible error scenarios 
-
+- Test cases to cover full functionality of introduced new functions covering all possible error scenarios
+- Implement the logic to handle false response at PaymentProvider service (customer account balance did not allow the charge). eg: Introduce new state for customer as 'suspended/blocked' and temporary stop the subscribed services 
+- I didnt't see exception handling for database related transactions in the current implementation, so followed the same pattern for new invoice update method. But going forward exceptions related to database operations can be handled properly in the data layer and a proper custom exception should be thrown to the business layer
 
 ### External libraries
 
-Latest stable version of Quartz job scheduling library
+Latest stable version of Quartz job scheduling library (2.3.0)
 
 
+<br />
 It took me around 2.5 days to implement the logic and test cases. Additionally I spend around 2 days to learn the basics of Kotlin.
 
 I will be happy to discuss any further details on this.
